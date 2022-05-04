@@ -1,6 +1,7 @@
 <?php
 use App\Models\cart;
 use App\Models\category;
+use App\Models\product;
 if(!function_exists('cart_count')){
   function cart_count($user){
     if(Auth::check())
@@ -92,4 +93,11 @@ if(!function_exists('cart_price')){
     }
     
     
+}
+
+if(!function_exists('product')){
+  function product (){
+    $product=product::all();
+    return $product;
+  }
 }

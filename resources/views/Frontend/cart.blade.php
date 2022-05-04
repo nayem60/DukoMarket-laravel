@@ -3,42 +3,15 @@
 
   
     
-    <main>
-        <!-- page-banner-area-start -->
-        <div class="page-banner-area page-banner-height-2" data-background="assets/img/banner/page-banner-4.jpg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="page-banner-content text-center">
-                            <h4 class="breadcrumb-title">Your Cart</h4>
-                            <div class="breadcrumb-two">
-                                <nav>
-                                   <nav class="breadcrumb-trail breadcrumbs">
-                                      <ul class="breadcrumb-menu">
-                                         <li class="breadcrumb-trail">
-                                            <a href="index.html"><span>Home</span></a>
-                                         </li>
-                                         <li class="trail-item">
-                                            <span>Cart</span>
-                                         </li>
-                                      </ul>
-                                   </nav> 
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- page-banner-area-end -->
-
+    <main >
+       
         <!-- cart-area-start -->
-        <section class="cart-area pt-120 pb-120">
-            <div class="container-fluid">
-               <div class="row">
-                  <div class="col-12">
+        <section class="cart-area pt-120 pb-120 " >
+            <div class="container-fluid ">
+               <div class="row ">
+                  <div class="col-12 reload">
                         <form action="">
-                           <div class="table-content table-responsive">
+                           <div class="table-content table-responsive ">
                               <table class="table">
                                     <thead>
                                        <tr>
@@ -200,7 +173,7 @@
        url:"dec/cart/"+id,
        type:'get',
        success:function(data){
-         console.log(data);
+         $(".reload").load(location.href + " .reload");
        }
      });
   }
@@ -209,8 +182,9 @@
     $.ajax({
       url:"inc/cart/"+id,
       type:'get',
-      success:function(data){
-        console.log(data);
+      success:function(){
+         $(".reload").load(location.href + " .reload");
+          
       }
     });
   }
@@ -220,7 +194,9 @@
       url:"remove/cart/"+id,
       type:'get',
       success:function(data){
-        console.log(data);
+        $(".reload-cart").load(location.href + " .reload-cart");
+        $(".reload").load(location.href + " .reload");
+          
       }
     });
   }

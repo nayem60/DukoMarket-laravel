@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use DGvai\SSLCommerz\SSLCommerz;
+use App\Library\SslCommerz\SslCommerzNotification;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -11,7 +12,6 @@ use App\Models\cart;
 use App\Models\order;
 use App\Models\orderitem;
 use App\Models\payment_type;
-use App\Library\SslCommerz\SslCommerzNotification;
 
 class CheckoutController extends Controller
 {
@@ -44,6 +44,7 @@ class CheckoutController extends Controller
         $totals=totals(Auth::user()->id);
          DB::transaction(function() use ($request,$cart,$totals,$order){
           if($order->save()){
+            session()->put('order_id',$order->id);
             foreach($cart as $i){
             $orderItem=new orderitem();
             $orderItem->order_id=$order->id;
@@ -66,56 +67,38 @@ class CheckoutController extends Controller
          }
          $payment=$request->post('payment');
          if($payment === "sslcommerz"){
-          $sslc = new SSLCommerz();
-        $sslc->amount(20)
-            ->trxid('DEMOTRX123')
-            ->product('Demo Product Name')
-            ->customer('Customer Name','custemail@email.com');
-        return $sslc->make_payment();
-          
-          
-          
-          die();
-           $post_data = array();
-           $post_data['total_amount'] = '90'; # You cant not pay less than 10
-           $post_data['currency'] = "BDT";
-           $post_data['tran_id'] = uniqid();
-           
-           
-           $post_data['cus_name'] = 'Customer Name';
-           $post_data['cus_email'] = 'customer@mail.com';
-           $post_data['cus_add1'] = 'Customer Address';
-           $post_data['cus_add2'] = "";
-           $post_data['cus_city'] = "";
-           $post_data['cus_state'] = "";
-           $post_data['cus_postcode'] = "";
-           $post_data['cus_country'] = "Bangladesh";
-           $post_data['cus_phone'] = '8801XXXXXXXXX';
-           $post_data['cus_fax'] = "";
-           
-           $post_data['ship_name'] = "Store Test";
-           $post_data['ship_add1'] = "Dhaka";
-           $post_data['ship_add2'] = "Dhaka";
-           $post_data['ship_city'] = "Dhaka";
-           $post_data['ship_state'] = "Dhaka";
-           $post_data['ship_postcode'] = "1000";
-           $post_data['ship_phone'] = "";
-           $post_data['ship_country'] = "Bangladesh";
-           $post_data['shipping_method'] = "NO";
-           $post_data['product_name'] = "Computer";
-           $post_data['product_category'] = "Goods";
-           $post_data['product_profile'] = "physical-goods";
-           
-           $sslc = new SslCommerzNotification();
-        # initiate(Transaction Data , false: Redirect to SSLCOMMERZ gateway/ true: Show all the Payement gateway here )
-           $payment_options = $sslc->makePayment($post_data, 'hosted');
+             $post_data = array();
+             $post_data['total_amount'] = $totals; # You cant not pay less than 10
+             $post_data['currency'] = "BDT";
+             $post_data['tran_id'] = uniqid(); // tran_id must be unique
+
+            # CUSTOMER INFORMATION
+             $post_data['cus_name'] = $order->first_name.$order->last_name;
+             $post_data['cus_email'] = $order->email;
+             $post_data['cus_country'] = $order->country;
+             $post_data['cus_phone'] = $order->number;
+             $post_data['cus_add1'] = $order->address;
+             $post_data['shipping_method'] = "Air";
+             $post_data['ship_name'] = $order->first_name.$order->last_name;
+             $post_data['ship_add1']=$order->address;
+             $post_data['ship_city']=$order->city;
+             $post_data['ship_postcode']=$order->zipcode;
+             $post_data['ship_country']=$request->post('country');
+             $post_data['product_profile']="physical-goods";
         
-           if (!is_array($payment_options)) {
-               print_r($payment_options);
-               $payment_options = array();
-           }
-
-
+            //$post_data['shipping_method'] = "NO";
+             $post_data['product_name'] = "Computer";
+             $post_data['product_category'] = "Goods";
+        
+             $sslc = new SslCommerzNotification();
+            # initiate(Transaction Data , false: Redirect to SSLCOMMERZ gateway/ true: Show all the Payement gateway here )
+             $payment_options = $sslc->makePayment($post_data, 'hosted');
+                 if (!is_array($payment_options)) {
+                      print_r($payment_options);
+                      $payment_options = array();
+                }
+             
+          
          }elseif($payment === "aamrpay"){
            $url = 'https://sandbox.aamarpay.com/request.php'; // live url https://secure.aamarpay.com/request.php
             $fields = array(

@@ -7,15 +7,23 @@ use Illuminate\Http\Request;
 use App\Library\SslCommerz\SslCommerzNotification;
 use App\Models\payment_type;
 use Auth;
+use DGvai\SSLCommerz\SSLCommerz;
 class SslCommerzPaymentController extends Controller
 {
 
     public function index(Request $request)
     {
+      $sslc = new SSLCommerz();
+           $sslc->amount(20)
+            ->trxid('DEMOTRX123')
+            ->product('Demo Product Name')
+            ->customer('Customer Name','custemail@email.com');
+          return $sslc->make_payment($checkout=false);
+          
         # Here you have to receive all the order data to initate the payment.
         # Let's say, your oder transaction informations are saving in a table called "orders"
         # In "orders" table, order unique identity is "transaction_id". "status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
-
+       die();
         $post_data = array();
         $post_data['total_amount'] = '10'; # You cant not pay less than 10
         $post_data['currency'] = "BDT";
@@ -85,24 +93,33 @@ class SslCommerzPaymentController extends Controller
     {
        
     
-        echo "Transaction is Successful";
+        
+         $tran_id = $request->input('tran_id');
+         $status = $request->input('status');
+         $val_id = $request->input('val_id');
+         $amount = $request->input('amount');
+         $currency = $request->input('currency');
 
-        $tran_id = $request->input('tran_id');
-        $val_id = $request->input('val_id');
-        $amount = $request->input('amount');
-        $currency = $request->input('currency');
-        // insert data base
-        DB::table('payment_types')->where('paymeny_id',$tran_id)->updateOrInsert([
-         'user_id'=>1,
-         'order_id'=>rand(1,10),
-         'orderid'=>$val_id,
-         'paymeny_id'=>$tran_id,
-         'mode'=>'sslcomerz',
-         'status'=>'approved',
-      
-          ]);
+         if($status==="VALID"){
+           $payment=new payment_type();
+           $payment->user_id=Auth::user()->id;
+           $payment->order_id=1;
+           $payment->orderid=$val_id;
+           $payment->paymeny_id=$tran_id;
+           $payment->mode='sslcomerz';
+           $payment->status='approved';
+           //$payment->save();
+           dd("valid");
+           
+         }else{
+           dd("Status Invalid");
+         }
+           
+         
+        
 
         $sslc = new SslCommerzNotification();
+        dd('payment success');
         die();
 
         #Check order status in order tabel against the transaction id or order id.
@@ -149,6 +166,7 @@ class SslCommerzPaymentController extends Controller
 
     public function fail(Request $request)
     {
+        return $request->all();
         $tran_id = $request->input('tran_id');
 
         $order_detials = DB::table('orders')
@@ -170,6 +188,7 @@ class SslCommerzPaymentController extends Controller
 
     public function cancel(Request $request)
     {
+        dd('cancel');
         $tran_id = $request->input('tran_id');
 
         $order_detials = DB::table('orders')

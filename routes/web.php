@@ -26,20 +26,15 @@ Route::get('user-profile',[App\Http\Controllers\Frontend\UserProfileController::
 Route::get('tracking-order',[App\Http\Controllers\Frontend\TrackingController::class,'tracking'])->name('tracking');
 Route::get('review/{id}',[App\Http\Controllers\Frontend\ReviewController::class,'review'])->name('review');
 Route::get('store-review',[App\Http\Controllers\Frontend\ReviewController::class,'store']);
-
+Route::get('payment', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'index']);
 });
 
 // SSLCOMMERZ Start
-Route::get('/example1', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'exampleEasyCheckout']);
 
-Route::post('/pay', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'index']);
-Route::post('pay-via-ajax', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'payViaAjax']);
-
-Route::post('sslcommerz/success', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'success']);
-Route::post('sslcommerz/fail', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'fail']);
-Route::post('sslcommerz/cancel', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'cancel']);
-
-Route::post('/ipn', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'ipn']);
+Route::post('/success', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'success'])->name('sslc.success');
+Route::post('/fail', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'fail'])->name('sslc.failure');
+Route::post('/cancel', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'cancel'])->name('sslc.cancel');
+Route::post('/ipn', [App\Http\Controllers\Frontend\SslCommerzPaymentController::class, 'ipn'])->name('sslc.ipn');
 //SSLCOMMERZ END
 
 //razorpay
