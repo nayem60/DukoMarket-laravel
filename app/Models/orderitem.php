@@ -20,5 +20,8 @@ class orderitem extends Model
     public function review (){
       return $this->hasOne(review::class,'orderitem_id','id');
     }
+    public function variant(){
+      return $this->belongsTo(variant::class,'variant_id');
+    }
     
 }

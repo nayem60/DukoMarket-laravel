@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Auth;
 class ProductDetailController extends Controller
 {
@@ -18,7 +19,14 @@ class ProductDetailController extends Controller
       if(!Auth::check()){
         
       }
-       $product=product::where('slug',$slug)->first();
+      try{
+       $product=product::where('slug',$slug)->firstOrFail();
+      }catch(ModelNotFoundException $e){
+        dd('hi');
+      }catch(\Exception $e){
+        dd(get_class($e));
+      }
+      
        return view('frontend.product-detail',compact('product'));
     }
 

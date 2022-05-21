@@ -13,17 +13,7 @@ class SslCommerzPaymentController extends Controller
 
     public function index(Request $request)
     {
-      $sslc = new SSLCommerz();
-           $sslc->amount(20)
-            ->trxid('DEMOTRX123')
-            ->product('Demo Product Name')
-            ->customer('Customer Name','custemail@email.com');
-          return $sslc->make_payment($checkout=false);
-          
-        # Here you have to receive all the order data to initate the payment.
-        # Let's say, your oder transaction informations are saving in a table called "orders"
-        # In "orders" table, order unique identity is "transaction_id". "status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
-       die();
+      
         $post_data = array();
         $post_data['total_amount'] = '10'; # You cant not pay less than 10
         $post_data['currency'] = "BDT";
@@ -102,24 +92,26 @@ class SslCommerzPaymentController extends Controller
 
          if($status==="VALID"){
            $payment=new payment_type();
-           $payment->user_id=Auth::user()->id;
-           $payment->order_id=1;
+           $payment->user_id=cache('userid');
+           $payment->order_id=cache('orderid');
            $payment->orderid=$val_id;
            $payment->paymeny_id=$tran_id;
            $payment->mode='sslcomerz';
            $payment->status='approved';
-           //$payment->save();
-           dd("valid");
+           $payment->save();
+           cache()->forget('userid');
+           cache()->forget('orderid');
+           return redirect()->route('thank-you');
+           
            
          }else{
-           dd("Status Invalid");
+           cache()->forget('userid');
+           cache()->forget('orderid');
+           dd("Money Transfer Failed!");
          }
            
-         
-        
-
         $sslc = new SslCommerzNotification();
-        dd('payment success');
+        
         die();
 
         #Check order status in order tabel against the transaction id or order id.
@@ -165,8 +157,10 @@ class SslCommerzPaymentController extends Controller
     }
 
     public function fail(Request $request)
-    {
-        return $request->all();
+    { 
+         cache()->forget('userid');
+         cache()->forget('orderid');
+        dd('transaction failed');
         $tran_id = $request->input('tran_id');
 
         $order_detials = DB::table('orders')

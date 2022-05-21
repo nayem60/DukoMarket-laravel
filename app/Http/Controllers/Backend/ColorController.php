@@ -18,7 +18,8 @@ class ColorController extends Controller
     {
         $category=category::all();
         $subcategory=subcategory::all();
-        return view('Backend.color',compact('category','subcategory'));
+        $color=color::all();
+        return view('Backend.color',compact('category','subcategory','color'));
     }
 
     /**
@@ -50,7 +51,7 @@ class ColorController extends Controller
           $color->save();
         }
         
-        return back();
+        return back()->with('success','Add Color Success');
     }
 
     /**
@@ -75,24 +76,24 @@ class ColorController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
-        //
+     
+        $category=$request->post('category');
+        $subcategory=$request->post('subcategory');
+        $colors=$request->post('color');
+
+          $color=color::find($id);
+          $color->category_id=$category;
+          $color->subcategory_id=$subcategory;
+          $color->name=$colors;
+          $color->save();
+        
+        return back()->with('success','Update Color Success');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         //

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\category;
 use App\Models\subcategory;
-use App\Models\subcategory_child;
+use App\Models\Subsubcategory;
 class SubcategoryChildController extends Controller
 {
     /**
@@ -18,7 +18,8 @@ class SubcategoryChildController extends Controller
     {
         $category=category::all();
         $subcategory=subcategory::all();
-        return view('Backend.subcategory-child',compact('category','subcategory'));
+        $sub_child=Subsubcategory::all();
+        return view('Backend.subcategory-child',compact('category','subcategory','sub_child'));
     }
 
     /**
@@ -44,13 +45,17 @@ class SubcategoryChildController extends Controller
         $name=$request->post('name');
         $status=$request->post('status');
         
-        $subcategory_child=new subcategory_child();
+        if($category=="" && $subcategory=="" && $name=="" ){
+          return back()->with('error','Field is required');
+        }else{
+        $subcategory_child=new Subsubcategory();
         $subcategory_child->category_id=$category;
         $subcategory_child->subcategory_id=$subcategory;
         $subcategory_child->name=$name;
-        $subcategory_child->status=$status;
+        $subcategory_child->status=$status??0;
         $subcategory_child->save();
-        return back();
+        return back()->with('success','Subcategory Child Add successful!');
+        }
     }
 
     /**
@@ -84,7 +89,21 @@ class SubcategoryChildController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $category=$request->post('category_id');
+        $subcategory=$request->post('subcategory_id');
+        $name=$request->post('name');
+        $status=$request->post('status');
+        
+        if($category == null && $subcategory=="" && $name==""){
+          return back()->with('error','Field is required');
+        }
+        $subcategory_child=Subsubcategory::find($id);
+        $subcategory_child->category_id=$category;
+        $subcategory_child->subcategory_id=$subcategory;
+        $subcategory_child->name=$name;
+        $subcategory_child->status=$status??0;
+        $subcategory_child->save();
+        return back()->with('success','Subcategory Child Update successful!');
     }
 
     /**
@@ -95,6 +114,7 @@ class SubcategoryChildController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Subsubcategory::find($id)->delete ();
+        return back()->with('success','Delete Successful!');
     }
 }

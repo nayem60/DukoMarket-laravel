@@ -10,6 +10,9 @@ class size extends Model
     use HasFactory;
     protected $table="sizes";
     
+    public function category(){
+      return $this->belongsTo(category::class,'category_id');
+    }
     public function subcategory(){
       return $this->belongsTo(subcategory::class,'subcategory_id');
     }

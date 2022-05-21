@@ -13,6 +13,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'stripe' => [
+        'secret' => 'sk_test_51KMQhFI3IGihHWoZRypJc0oz0Mtq9KCLPGC5ynpuPJDx6cHEL8vB1MCf5qIiCqHtP8jhIWiI3cpEs8KHQIL0ZiSz00WclAyzF5',
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

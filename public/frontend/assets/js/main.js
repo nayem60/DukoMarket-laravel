@@ -29,7 +29,8 @@
 
 (function ($) {
 	"use strict";
-
+ 
+ 
 	var windowOn = $(window);
 	////////////////////////////////////////////////////
 	//01. PreLoader Js

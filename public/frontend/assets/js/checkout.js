@@ -5,20 +5,23 @@ $(document).ready(function(){
           $('.razorpay').show()
           $('.place_order').hide();
           $('.sslcommerz').hide()
-           $('.aamrpay').hide();
+          $('.paypal').hide();
+           $('.stripe').hide();
        }else if(payment=='sslcommerz'){
            $('.sslcommerz').show()
            $('.place_order').hide();
            $('.razorpay').hide()
-           $('.aamrpay').hide();
-       }else if(payment=='aamrpay'){
-           $('.aamrpay').show();
+           $('.paypal').hide();
+           $('.stripe').hide();
+       }else if(payment=='stripe'){
+           $('.stripe').show();
            $('.sslcommerz').hide()
            $('.place_order').hide();
+           $('.paypal').hide();
            $('.razorpay').hide()
        }else if(payment=='paypal'){
            $('.paypal').show();
-           $('.aamrpay').hide();
+           $('.stripe').hide();
            $('.sslcommerz').hide()
            $('.place_order').hide();
            $('.razorpay').hide()
@@ -28,7 +31,7 @@ $(document).ready(function(){
          $('.razorpay').hide();
          $('.sslcommerz').hide();
          $('.place_order').show();
-         $('.aamrpay').hide();
+         $('.stripe').hide();
          
          
        }
@@ -48,11 +51,49 @@ $(document).ready(function(){
     var order_note=$('#order_note').val();
    if(!first_name){
      var error="field is required";
-     $("#error").html(error);
+     $("#first_name_error").html(error);
    }else{
-     $("#error").html('');
+     $("#first_name_error").html('');
    }
-   var data={
+   
+   if(!last_name){
+     var error="field is required";
+     $("#last_name_error").html(error);
+   }else{
+     $("#last_name_error").html('');
+   }
+   if(!city){
+     var error="field is required";
+     $("#city_error").html(error);
+   }else{
+     $("#city_error").html('');
+   }
+   
+   if(!address){
+     var error="field is required";
+     $("#address_error").html(error);
+   }else{
+     $("#addres_error").html('');
+   }
+   if(!zipcode){
+     var error="field is required";
+     $("#zipcode_error").html(error);
+   }else{
+     $("#zipcode_error").html('');
+   }
+   if(!email){
+     var error="field is required";
+     $("#email_error").html(error);
+   }else{
+     $("#email_error").html('');
+   }
+   
+   if(!mobile){
+     var error="field is required";
+     $("#mobile_error").html(error);
+   }else{
+     $("#mobile_error").html('');
+     var data={
      'first_name':first_name,
      'last_name':last_name,
      'country':country,
@@ -104,7 +145,7 @@ $(document).ready(function(){
             type:'post',
             data:data,
             success:function(data){
-              alert(data);
+              $(location).prop('href','/thank-you')
             }
           });
         
@@ -125,42 +166,14 @@ $(document).ready(function(){
     rzp1.open();
      }
    });
-  });
-  
-//=================SSLcommerz=======
-  
-$('.aamrpay').click(function(){
-    var first_name=$('#first_name').val();
-    var last_name=$('#last_name').val();
-    var country=$('#country').val();
-    var city=$('#city').val();
-    var address=$('#address').val();
-    var zipcode=$('#zipcode').val();
-    var email=$('#email').val();
-    var mobile=$('#mobile').val();
-    var order_note=$('#order_note').val();
-    
-    var data={
-     'first_name':first_name,
-     'last_name':last_name,
-     'country':country,
-     'city':city,
-     'address':address,
-     'zipcode':zipcode,
-     'email':email,
-     'mobile':mobile,
-     'order_note':order_note
    }
    
-    $.ajax({
-      url:'/aamrpay',
-      type:'post',
-      data:data,
-      success:function(response){
-        console.log(response);
-      }
-    });
-});  
+  });
   
+//=================Stripe=======
   
+
+
+
+
 });

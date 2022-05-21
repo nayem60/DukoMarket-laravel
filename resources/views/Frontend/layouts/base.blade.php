@@ -1,8 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="zxx">
- @php
-    $setting=App\Models\setting::first();
- @endphp
+
 <!-- Mirrored from themepure.net/template/dukamarket/dukamarket/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 19 Feb 2022 17:21:09 GMT -->
 <head>
       <meta charset="utf-8">
@@ -14,8 +12,9 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       
       <!-- Place favicon.ico in the root directory -->
-      <link rel="shortcut icon" type="image/x-icon" href="{{ $setting->icon }}">
+      <link rel="shortcut icon" type="image/x-icon" href="{{ setting()->icon ?? "" }}">
       <!-- CSS here -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css">
       <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/preloader.css">
       <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/bootstrap.css">
       <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/meanmenu.css">
@@ -75,7 +74,7 @@
                                     </select>
                                 </div>
                                 <div class="support d-none d-sm-block">
-                                    <p>Need Help? <a href="tel:+{{ $setting->number}}">+{{ $setting->number }}</a></p>
+                                    <p>Need Help? <a href="tel:+{{ setting()->number ?? ""}}">+{{ setting()->number?? "" }}</a></p>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +101,7 @@
                         <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4">
                             <div class="header__info">
                                 <div class="logo">
-                                    <a href="/" class="logo-image"><img src="{{ asset($setting->logo) }}" alt="logo"></a>
+                                    <a href="/" class="logo-image"><img src="{{ asset(setting()->logo ?? "" ) }}" alt="logo"></a>
                                 </div>
                             </div>
                         </div>
@@ -135,12 +134,20 @@
                         <div class="col-xl-4 col-lg-5 col-md-8 col-sm-8 ">
                             <div class="header-action ">
                                 <div class="block-userlink">
-                                    <a class="icon-link" href="my-account.html">
+                                    <a class="icon-link" href="{{ route('user_profile') }}">
                                     <i class="flaticon-user"></i>
                                     <span class="text">
+                                     @if(Route::has('login'))
+                                     @auth
+                                    <span class="sub"> My Account</span>
+                                       {{ Auth::user()->name }}</span>
+                                    </a>
+                                     @endauth
+                                     @else
                                     <span class="sub">Login </span>
                                     My Account </span>
                                     </a>
+                                    @endif
                                 </div>
                                 @php
                                    $wishlist=App\Models\wishlist::where('user_id',Auth::user()->id)->get();
@@ -176,12 +183,12 @@
                                                   <div class="cart__item d-flex justify-content-between align-items-center">
                                                     <div class="cart__inner d-flex">
                                                       <div class="cart__thumb">
-                                                        <a href="product-details.html">
+                                                        <a href="{{route('product_detail',$carts->product->slug)}}">
                                                           <img src="{{ asset('frontend') }}/assets/img/product/{{ $carts->product->image }}" alt="">
                                                         </a>
                                                       </div>
                                                       <div class="cart__details">
-                                                        <h6><a href="product-details.html"> {{ $carts->product->name }} </a></h6>
+                                                        <h6><a href="{{route('product_detail',$carts->product->slug)}}"> {{ $carts->product->name }} </a></h6>
                                                         <div class="cart__price">{{ $carts->quantity }} ×
                                                           <span>$
                                                           @if($carts->variant)
@@ -196,7 +203,7 @@
                                                       </div>
                                                     </div>
                                                     <div class="cart__del">
-                                                        <a href="#"><i class="fal fa-times"></i></a>
+                                                        <a href="javascript:void(0)" onclick="cartDel({{ $carts->id }})"><i class="fal fa-times"></i></a>
                                                     </div>
                                                   </div>
                                                 </li>
@@ -208,8 +215,8 @@
                                                   </div>
                                                 </li>
                                                 <li>
-                                                    <a href="cart.html" class="wc-cart mb-10">View cart</a>
-                                                    <a href="checkout.html" class="wc-checkout">Checkout</a>
+                                                    <a href="{{ route('cart')}}" class="wc-cart mb-10">View cart</a>
+                                     
                                                 </li>
                                             </ul>
                                         </div>
@@ -529,7 +536,7 @@
                                                 <ul>
                                                     <li><a href="contact.html">Store Location</a></li>
                                                     <li><a href="my-account.html">My account</a></li>
-                                                    <li><a href="contact.html">Order Tracking</a></li>
+                                                    <li><a href="{{ route('order.tracking') }}">Order Tracking</a></li>
                                                     <li><a href="faq.html">FAQs</a></li>
                                                 </ul>
                                             </div>
@@ -549,7 +556,7 @@
                                                     </div>
                                                     <div class="text">
                                                         <h4>Got Question? Call us 24/7!</h4>
-                                                        <span><a href="tel:{{ $setting->number }}">+{{ $setting->number }}</a></span>
+                                                        <span><a href="tel:{{ setting()->number ?? "" }}">+{{ setting()->number ?? "" }}</a></span>
                                                     </div>
                                                 </div>
                                                 <div class="footer__info">
@@ -612,7 +619,7 @@
     <!-- footer-end -->
   @foreach(product() as $modal_product)
         <!-- shop modal start -->
-        <div class="modal fade" id="productModalId{{ $loop->index }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" id="productModalId{{ $modal_product->id }}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered product__modal" role="document">
                 <div class="modal-content">
                     <div class="product__modal-wrapper p-relative">
@@ -776,11 +783,14 @@
       <script src="{{asset('frontend')}}/assets/js/detail.js"></script>
       <script src="{{asset('frontend')}}/assets/js/checkout.js"></script>
       <script src="{{asset('frontend')}}/assets/js/wishlist.js"></script>
+      <script src="{{asset('frontend')}}/assets/js/cart.js"></script>
+      
       <script>
         @if(Session::has('success'))
           toastr.success("{{Session('success')}}");
         @endif
       </script>
+     
      
     @stack('script')
 

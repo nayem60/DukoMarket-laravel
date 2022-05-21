@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\AuthenticatedAdminController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -53,4 +54,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+});
+
+//==admin
+Route::prefix('admin')->name('admin.')->group(function (){
+  Route::get('/login',[App\Http\Controllers\Auth\AuthenticatedAdminController::class,'create'])->middleware('guest:admin')->name('index');
+  Route::post('/login',[App\Http\Controllers\Auth\AuthenticatedAdminController::class,'store'])->middleware('guest:admin')->name('login');
+  Route::get('/logout',[App\Http\Controllers\Auth\AuthenticatedAdminController::class,'destroy'])->name('logout');
+  
+  
 });

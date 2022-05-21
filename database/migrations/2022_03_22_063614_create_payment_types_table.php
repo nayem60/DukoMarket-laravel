@@ -19,7 +19,7 @@ return new class extends Migration
             $table->bigInteger('order_id')->unsigned();
             $table->string('orderid')->nullable();
             $table->string('paymeny_id')->nullable();
-            $table->enum('mode',['cod','card','paypal','sslcomerz','razorpy']);
+            $table->enum('mode',['cod','stripe','paypal','sslcomerz','razorpy']);
             $table->enum('status',['pending','approved','declined','refunded'])->default('pending');
             $table->timestamps();
         });

@@ -20,10 +20,6 @@ return new class extends Migration
             $table->bigInteger('variant_id')->nullable();
             $table->decimal('price');
             $table->integer('quantity');
-            $table->decimal('subtotal')->nullable();
-            $table->decimal('discount')->default(0);
-            $table->decimal('tax')->default(0);
-            $table->decimal('total');
             $table->boolean('rstatus')->default(0);
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

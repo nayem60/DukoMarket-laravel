@@ -1,4 +1,5 @@
 @extends('Frontend/layouts.base')
+
 @section('main')
 <div class="card">
   <div class="card-body">
@@ -33,7 +34,7 @@
                   <td>{{ $row->product->name }}</td>
                   <td>{{ $row->product->price }}</td>
                   <td>{{ $row->quantity }}</td>
-                  <td>{{ number_format($row->quantity*$row->product->price,2,'.') }}</td>
+                  <td>{{ number_format($row->quantity*$row->product->price,2,'.','') }}</td>
                  @if($orderitems->status==='delivered' && $row->rstatus===1)
                   <td><a href="{{route('review',$row->id)}}" class="text-warning">review</a></td>
                  @endif
@@ -45,7 +46,7 @@
             </table>
           </div>
           <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-            <form action="{{ route('tracking') }}">
+            <form action="{{route('order.tracking')}}">
               <div class="btn-group d-flex justify-content-center">
                 <input type="text" class="form-control" name="tracking" placeholder="Tracking Order">
                 <button type="submit" class="btn btn-primary">Search..</button>
@@ -63,5 +64,6 @@
     </div>
   </div>
 </div>
+
 
 @endsection

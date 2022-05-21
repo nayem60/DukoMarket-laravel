@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\category;
 use App\Models\subcategory;
+use App\Models\size;
 class SizeController extends Controller
 {
     /**
@@ -17,7 +18,8 @@ class SizeController extends Controller
     {
         $category=category::all();
         $subcategory=subcategory::all();
-        return view('Backend.size',compact('category','subcategory'));
+        $size=size::all();
+        return view('Backend.size',compact('category','subcategory','size'));
     }
 
     /**
@@ -38,7 +40,18 @@ class SizeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category=$request->post('category');
+        $subcategory=$request->post('subcategory');
+        $name=$request->post('size');
+        foreach($name as $value){
+          $sizes=new size();
+          $sizes->category_id=$category;
+          $sizes->subcategory_id=$subcategory;
+          $sizes->name=$value;
+          $sizes->save();
+        }
+        
+        return back()->with('success','Add Size Success');
     }
 
     /**
@@ -70,9 +83,20 @@ class SizeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+     public function update(Request $request, $id)
     {
-        //
+     
+        $category=$request->post('category');
+        $subcategory=$request->post('subcategory');
+        $colors=$request->post('size');
+
+          $color=size::find($id);
+          $color->category_id=$category;
+          $color->subcategory_id=$subcategory;
+          $color->name=$colors;
+          $color->save();
+        
+        return back()->with('success','Update Size Success');
     }
 
     /**

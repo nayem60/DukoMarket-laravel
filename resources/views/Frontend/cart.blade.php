@@ -77,7 +77,7 @@
                                          <p>{{ Session::get('coupon_error') }}</p>
                                       @endif
                                      @if(!Session::has('coupon'))
-                                      <form action="">
+                                      <form action="" >
                                        <div class="coupon">
                                           <input id="coupon_code" class="input-text" name="coupon_code" value="" placeholder="Coupon code" type="text">
                                           <button class="tp-btn-h1"  type="submit">Apply
@@ -98,7 +98,7 @@
                                        <ul class="mb-20">
                                           <li>Subtotal <span>${{ number_format($totals,2,'.','')}}</span></li>
                                           @if(Session::has('coupon'))
-                                           <li>Discount<span>${{ $discount }} <a href="{{ route('coupons') }}" style="font-size:25px; color:red;">×</a></span></li>
+                                           <li>Discount<span>${{ $discount }} <a href="/counpon-destroy" style="font-size:25px; color:red;">×</a></span></li>
                                            <li>Total <span>${{ $subtotal }}</span></li>
                                           @else
                                           <li>Total <span>${{ number_format($totals,2,'.','') }}</span></li>
@@ -200,6 +200,7 @@
       }
     });
   }
+  
   
 </script>
 

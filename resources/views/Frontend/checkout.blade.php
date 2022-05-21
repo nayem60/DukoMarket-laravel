@@ -45,150 +45,79 @@
                                         <div class="country-select">
                                             <label>Country <span class="required">*</span></label>
                                             <select style="display: none;" id="country" name="country">
-                                                <option value="volvo">bangladesh</option>
-                                                <option value="saab">Algeria</option>
-                                                <option value="mercedes">Afghanistan</option>
-                                                <option value="audi">Ghana</option>
-                                                <option value="audi2">Albania</option>
-                                                <option value="audi3">Bahrain</option>
-                                                <option value="audi4">Colombia</option>
-                                                <option value="audi5">Dominican Republic</option>
+                                                <option value="bangladesh">bangladesh</option>
+                                                <option value="Algeria">Algeria</option>
+                                                <option value="Afghanistan">Afghanistan</option>
+                                                <option value="Ghana">Ghana</option>
+                                                <option value="Albania">Albania</option>
+                                                <option value="Bahrain">Bahrain</option>
+                                                <option value="Colombia">Colombia</option>
+                                                <option value="Dominican">Dominican Republic</option>
                                             </select><div class="nice-select" tabindex="0"><span class="current">bangladesh</span><ul class="list"><li data-value="volvo" class="option selected">bangladesh</li><li data-value="saab" class="option">Algeria</li><li data-value="mercedes" class="option">Afghanistan</li><li data-value="audi" class="option">Ghana</li><li data-value="audi2" class="option">Albania</li><li data-value="audi3" class="option">Bahrain</li><li data-value="audi4" class="option">Colombia</li><li data-value="audi5" class="option">Dominican Republic</li></ul></div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="checkout-form-list">
                                             <label>First Name <span class="required">*</span></label>
-                                            <input type="text" id="first_name" placeholder="" name="first_name">
-                                            <small id="error" class="form-text text-danger"></small>
+                                            <input type="text" @error('first_name') is-invalid @enderror id="first_name" placeholder="" name="first_name" required>
+                                            <small id="first_name_error" class="form-text text-danger"></small>
+                                            @error('first_name')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="checkout-form-list">
                                             <label>Last Name <span class="required">*</span></label>
-                                            <input type="text" id="last_name" placeholder="" name="last_name">
+                                            <input type="text" id="last_name" placeholder="" name="last_name" required>
+                                            <small id="last_name_error" class="form-text text-danger"></small>
+                                            @error('last_name')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                     
                                     <div class="col-md-12">
                                         <div class="checkout-form-list">
                                             <label>Address <span class="required">*</span></label>
-                                            <input type="text" id="address" name="address" placeholder="Street address">
+                                            <input type="text" id="address" name="address" placeholder="Street address" required>
+                                            <small id="address_error" class="form-text text-danger"></small>
+                                            @error('address')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                   
                                     <div class="col-md-12">
                                         <div class="checkout-form-list">
                                             <label>Town / City <span class="required">*</span></label>
-                                            <input type="text" id="city" name="city" placeholder="Town / City">
+                                            <input type="text" id="city" name="city" placeholder="Town / City" required>
+                                            <small id="city_error" class="form-text text-danger"></small>
+                                            @error('city')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                   
                                     <div class="col-md-6">
                                         <div class="checkout-form-list">
                                             <label>Postcode / Zip <span class="required">*</span></label>
-                                            <input type="text" id="zipcode" name="zipcode" placeholder="Postcode / Zip">
+                                            <input type="text" id="zipcode" name="zipcode" placeholder="Postcode / Zip" required>
+                                            <small id="zipcode_error" class="form-text text-danger"></small>
+                                            @error('zipcode')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="checkout-form-list">
                                             <label>Email Address <span class="required">*</span></label>
-                                            <input name="email" id="email" type="email" placeholder="">
+                                            <input name="email" id="email" type="email" placeholder="email" required>
+                                            <small id="email_error" class="form-text text-danger"></small>
+                                            @error('email')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="checkout-form-list">
                                             <label>Phone <span class="required">*</span></label>
-                                            <input type="text" id="mobile" name="phone" placeholder="Postcode / Zip">
+                                            <input type="text" id="mobile" name="phone" placeholder="Phone" required>
+                                            <small id="mobile_error" class="form-text text-danger"></small>
+                                            @error('phone')<small class="form-text text-danger"> {{ $message }}</small>@enderror
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="different-address">
-                                    <div class="ship-different-title">
-                                        <h3>
-                                            <label>Ship to a different address?</label>
-                                            <input id="ship-box" type="checkbox">
-                                        </h3>
-                                    </div>
-                                    <div id="ship-box-info">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="country-select">
-                                                    <label>Country <span class="required">*</span></label>
-                                                    <select style="display: none;">
-                                                        <option value="volvo">bangladesh</option>
-                                                        <option value="saab">Algeria</option>
-                                                        <option value="mercedes">Afghanistan</option>
-                                                        <option value="audi">Ghana</option>
-                                                        <option value="audi2">Albania</option>
-                                                        <option value="audi3">Bahrain</option>
-                                                        <option value="audi4">Colombia</option>
-                                                        <option value="audi5">Dominican Republic</option>
-                                                    </select><div class="nice-select" tabindex="0"><span class="current">bangladesh</span><ul class="list"><li data-value="volvo" class="option selected">bangladesh</li><li data-value="saab" class="option">Algeria</li><li data-value="mercedes" class="option">Afghanistan</li><li data-value="audi" class="option">Ghana</li><li data-value="audi2" class="option">Albania</li><li data-value="audi3" class="option">Bahrain</li><li data-value="audi4" class="option">Colombia</li><li data-value="audi5" class="option">Dominican Republic</li></ul></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>First Name <span class="required">*</span></label>
-                                                    <input type="text" placeholder="">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>Last Name <span class="required">*</span></label>
-                                                    <input type="text" placeholder="">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="checkout-form-list">
-                                                    <label>Company Name</label>
-                                                    <input type="text" placeholder="">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="checkout-form-list">
-                                                    <label>Address <span class="required">*</span></label>
-                                                    <input type="text" placeholder="Street address">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="checkout-form-list">
-                                                    <input type="text" placeholder="Apartment, suite, unit etc. (optional)">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="checkout-form-list">
-                                                    <label>Town / City <span class="required">*</span></label>
-                                                    <input type="text" placeholder="Town / City">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>State / County <span class="required">*</span></label>
-                                                    <input type="text" placeholder="">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>Postcode / Zip <span class="required">*</span></label>
-                                                    <input type="text" placeholder="Postcode / Zip">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>Email Address <span class="required">*</span></label>
-                                                    <input type="email" placeholder="">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="checkout-form-list">
-                                                    <label>Phone <span class="required">*</span></label>
-                                                    <input type="text" placeholder="Postcode / Zip">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="order-notes">
                                         <div class="checkout-form-list">
                                             <label>Order Notes</label>
@@ -247,7 +176,12 @@
                                             </tr>
                                             <tr class="order-total">
                                                 <th>Order Total</th>
+                                                @if(Session::has('checkout'))
+                                                <td><strong><span class="amount">${{ Session::get('checkout')['total']}}</span></strong>
+                                                @else
                                                 <td><strong><span class="amount">${{ $totals }}</span></strong>
+                                                @endif
+                                                
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -261,17 +195,19 @@
                                         <option value="paypal">Paypal</option>
                                         <option value="razorpay">Razorpay</option>
                                         <option value="sslcommerz">SSLcommerz</option>
-                                        <option value="aamrpay">Aamrpay</option>
                                         <option value="stripe">Stripe</option>
+                                      
                                       </select>
                                     </div><br><br>
                                 </div>
                             </div>
                         </div>
+                        <div class="stripe" style=display:none;>
+                         @include('Frontend.stripe')
+                        </div>
                         <button type="submit"class="btn btn-primary btn-lg sslcommerz" id=""style="display:none;">Pay sslcommerz
                         </button>
-                         <button type="submit"class="btn btn-primary btn-lg aamrpay" id=""style="display:none;">Aamrpay
-                        </button>
+                        
                         <div class="order-button-payment mt-20">
                         <button type="submit" class="btn btn-warning btn-lg place_order">Place order</button>
                         </div>
@@ -339,6 +275,8 @@
 @push('script')
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://www.paypal.com/sdk/js?client-id=AVHPLusmJMvUhLJSIySJf7Y5AwhZuGDMX0fH5KwpRLXUogEDWGZQE7c1rFR-BJi0JKH5pVrzO4bBCOrC&currency=USD"></script>
+
+
 <script>
       paypal.Buttons({
         // Sets up the transaction when a payment button is clicked
@@ -346,7 +284,12 @@
           return actions.order.create({
             purchase_units: [{
               amount: {
-                value: '77.44' // Can also reference a variable or function
+                @if(Session::has('checkout'))
+                   value:{{Session::get('checkout')['total']}}
+                @else
+                  value: {{$totals}}
+                @endif
+                 // Can also reference a variable or function
               }
             }]
           });
@@ -391,7 +334,7 @@
              type:'post',
              data:data,
              success:function(data){
-               console.log(data);
+                 $(location).prop('href','/thank-you')
              }
            });
              

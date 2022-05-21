@@ -36,7 +36,7 @@
         <section class="features__area pt-20">
             <div class="container">
                 <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 gx-0">
-                  @foreach($service as $row)
+                  @forelse($service as $row)
                     <div class="col">
                         <div class="features__item d-flex white-bg">
                             <div class="features__icon mr-20">
@@ -48,14 +48,16 @@
                             </div>
                         </div>
                     </div>
-                   @endforeach
+                    @empty
+                     
+                   @endforelse
                 </div>
             </div>
         </section>
         <!-- features__area-end -->
 
      
-
+        @if($flash_product->count() > 0 && $flash_sale->status==1 && $flash_sale->sale_date > Carbon\Carbon::now())
         <!-- topsell__area-start -->
         <section class="topsell__area-1 pt-15">
             <div class="container">
@@ -81,6 +83,7 @@
                         </div>
                     </div>
                 </div>
+              
                 <div class="row">
                     <div class="product-bs-slider">
                         <div class="product-slider swiper-container">
@@ -89,31 +92,25 @@
                                 <div class="product__item swiper-slide">
                                     <div class="product__thumb fix">
                                         <div class="product-image w-img">
-                                            <a href="product-details.html">
+                                            <a href="{{ route('product_detail',$row->slug) }}">
                                                 <img src="{{asset('frontend')}}/assets/img/product/{{$row->image}}" alt="product">
                                             </a>
                                         </div>
-                                       
-                                    
-                                       
                                         @if($row->discount_price && $row->discount_price < $row->price)
                                         <div class="product__offer">
                                         <span class="discount">-{{round(($row->discount_price*100)/$row->price)}}%</span>
                                         </div>
                                         @endif
                                         <div class="product-action">
-                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $loop->index }}">
+                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $row->id }}">
                                                 <i class="fal fa-eye"></i>
                                                 <i class="fal fa-eye"></i>
                                             </a>
-                                            <a href="#" class="icon-box icon-box-1">
+                                            <a href="{{route('add_wishlist',$row->id)}}" class="icon-box icon-box-1">
                                                 <i class="fal fa-heart"></i>
                                                 <i class="fal fa-heart"></i>
                                             </a>
-                                            <a href="#" class="icon-box icon-box-1">
-                                                <i class="fal fa-layer-group"></i>
-                                                <i class="fal fa-layer-group"></i>
-                                            </a>
+                                            
                                         </div>
                                     </div>
                                     @php
@@ -126,7 +123,7 @@
                                        @endphp
                                     @endforeach
                                     <div class="product__content">
-                                        <h6><a href="product-details.html">{{ $row->name }}</a></h6>
+                                        <h6><a href="{{ route('product_detail',$row->slug) }}">{{ $row->name }}</a></h6>
                                         <div class="rating mb-5">
                                             <ul>
                                               @for($i=1;$i<=5;$i++)
@@ -138,7 +135,7 @@
                                               @endfor
                                                
                                             </ul>
-                                            <span>(01 review)</span>
+                                            <span>({{ $row->orderItem->where('rstatus',1)->count()}} review)</span>
                                         </div>
                                         @if($row->discount_price > 0)
                                         <div class="price mb-10">
@@ -165,9 +162,9 @@
                                     </div>
                                     @else
                                     <div class="product__add-cart text-center">
-                                        <button type="button" class=" cart-btn product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
+                                        <a href="{{ route('add_cart',$row->id) }}"  class=" cart-btn product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
                                         Add to Cart
-                                        </button>
+                                        </a>
                                     </div>
                                     @endif
                                 </div>
@@ -179,9 +176,11 @@
                         <div class="bs-button bs-button-next"><i class="fal fa-chevron-right"></i></div>
                     </div>
                 </div>
+            
             </div>
         </section>
         <!-- topsell__area-end -->
+        @endif
 
         <!-- banner__area-start -->
         <section class="banner__area banner__area-d pb-10">
@@ -240,7 +239,7 @@
                                             <div class="product__item swiper-slide">
                                                 <div class="product__thumb fix">
                                                     <div class="product-image w-img">
-                                                        <a href="product-details.html">
+                                                        <a href="{{ route('product_detail',$row->slug) }}">
                                                             <img src="{{asset('frontend')}}/assets/img/product/{{$row->image}}" alt="product">
                                                         </a>
                                                     </div>
@@ -252,18 +251,15 @@
                                                     
                                                     @endif
                                                     <div class="product-action">
-                                                        <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $loop->index }}">
+                                                        <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $row->id }}">
                                                             <i class="fal fa-eye"></i>
                                                             <i class="fal fa-eye"></i>
                                                         </a>
-                                                        <a href="#" class="icon-box icon-box-1">
+                                                        <a href="{{route('add_wishlist',$row->id)}}" class="icon-box icon-box-1">
                                                             <i class="fal fa-heart"></i>
                                                             <i class="fal fa-heart"></i>
                                                         </a>
-                                                        <a href="#" class="icon-box icon-box-1">
-                                                            <i class="fal fa-layer-group"></i>
-                                                            <i class="fal fa-layer-group"></i>
-                                                        </a>
+
                                                     </div>
                                                 </div>
                                                 @php 
@@ -275,7 +271,7 @@
                                                   @endphp
                                                 @endforeach
                                                 <div class="product__content">
-                                                    <h6><a href="product-details.html">{{ $row->name }}</a></h6>
+                                                    <h6><a href="{{ route('product_detail',$row->slug) }}">{{ $row->name }}</a></h6>
                                                     <div class="rating mb-5">
                                                         <ul>
                                                           @for($i=1;$i<=5;$i++)
@@ -302,9 +298,9 @@
                                                 @endif
                                                 </div>
                                                 <div class="product__add-cart text-center">
-                                                    <button type="button" class="cart-btn product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
+                                                    <a href="{{ route('add_cart',$row->id) }}" class="cart-btn product-modal-sidebar-open-btn d-flex align-items-center justify-content-center w-100">
                                                     Add to Cart
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             </div>
                                             @endforeach
@@ -334,20 +330,21 @@
                                 <h5 class="st-titile">Top Featured Products</h5>
                             </div>
                             <div class="button-wrap">
-                                <a href="shop.html">See All Product <i class="fal fa-chevron-right"></i></a>
+                             
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
+                    @if($featurab_product->count() > 0)
                     <div class="col-xl-6 col-lg-12">
                         <div class="single-features-item single-features-item-d b-radius mb-20">
                             <div class="row  g-0 align-items-center">
-                              @foreach($featurab_product->random(1) as $row)
+                              @forelse($featurab_product->random(1) as $row)
                                 <div class="col-md-6">
                                     <div class="features-thum">
                                         <div class="features-product-image w-img">
-                                            <a href="product-details.html"><img src="{{asset('frontend')}}/assets/img/product/{{ $row->image }}" alt=""></a>
+                                            <a href="{{ route('product_detail',$row->slug) }}"><img src="{{asset('frontend')}}/assets/img/product/{{ $row->image }}" alt=""></a>
                                         </div>
                                        
                                         @if($row->discount_price > 0 && $row->discount_price < $row->price)
@@ -356,7 +353,7 @@
                                         </div>
                                         @endif
                                         <div class="product-action">
-                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId">
+                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{$row->id}}">
                                                 <i class="fal fa-eye"></i>
                                                 <i class="fal fa-eye"></i>
                                             </a>
@@ -364,10 +361,7 @@
                                                 <i class="fal fa-heart"></i>
                                                 <i class="fal fa-heart"></i>
                                             </a>
-                                            <a href="#" class="icon-box icon-box-1">
-                                                <i class="fal fa-layer-group"></i>
-                                                <i class="fal fa-layer-group"></i>
-                                            </a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -382,7 +376,7 @@
                                 @endforeach
                                 <div class="col-md-6">
                                     <div class="product__content product__content-d">
-                                        <h6><a href="product-details.html">{{ $row->name }}</a></h6>
+                                        <h6><a href="{{ route('product_detail',$row->slug) }}">{{ $row->name }}</a></h6>
                                         <div class="rating mb-5">
                                             <ul class="rating-d">
                                               @for($i=1;$i<=5;$i++)
@@ -401,22 +395,24 @@
                                         </div>
                                         <div class="features-des mb-25">
                                             <ul>
-                                                <li><a href="product-details.html"><i class="fas fa-circle"></i> Bass and Stereo Sound.</a></li>
-                                                <li><a href="product-details.html"><i class="fas fa-circle"></i> Display with 3088 x 1440 pixels resolution.</a></li>
-                                                <li><a href="product-details.html"><i class="fas fa-circle"></i> Memory, Storage &amp; SIM: 12GB RAM, 256GB.</a></li>
-                                                <li><a href="product-details.html"><i class="fas fa-circle"></i> Androi v10.0 Operating system.</a></li>
+                                                <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Bass and Stereo Sound.</a></li>
+                                                <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Display with 3088 x 1440 pixels resolution.</a></li>
+                                                <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Memory, Storage &amp; SIM: 12GB RAM, 256GB.</a></li>
+                                                <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Androi v10.0 Operating system.</a></li>
                                             </ul>
                                         </div>
                                         <div class="cart-option">
-                                            <a href="#" class="cart-btn-2 w-100 mr-10">Add to Cart</a>
+                                            <a href="{{ route('add_cart',$row->id) }}" class="cart-btn-2 w-100 mr-10">Add to Cart</a>
                                             <a href="{{route('add_wishlist',$row->id)}}" class="transperant-btn"><i class="fal fa-heart"></i></a>
                                         </div>
                                     </div>
                                 </div>
-                              @endforeach
+                                @empty
+                              @endforelse
                             </div>
                         </div>
                     </div>
+                    @endif
                     <div class="col-xl-6 col-lg-12">
                         <div class="row">
                           @foreach($featurab_product as $row)
@@ -426,7 +422,7 @@
                                         <div class="col-6">
                                             <div class="features-thum">
                                                 <div class="features-product-image w-img">
-                                                    <a href="product-details.html"><img src="{{ asset('frontend') }}/assets/img/product/{{ $row->image }}" alt=""></a>
+                                                    <a href="{{ route('product_detail',$row->slug) }}"><img src="{{ asset('frontend') }}/assets/img/product/{{ $row->image }}" alt=""></a>
                                                 </div>
                                                 @if($row->discount_price > 0 && $row->discount_price < $row->price)
                                                 <div class="product__offer">
@@ -445,7 +441,7 @@
                                         @endforeach
                                         <div class="col-6">
                                             <div class="product__content product__content-d">
-                                                <h6><a href="product-details.html">{{ $row->name }}</a></h6>
+                                                <h6><a href="{{ route('product_detail',$row->slug) }}">{{ $row->name }}</a></h6>
                                                 <div class="rating mb-5">
                                                     <ul>
                                                       @for($i=1;$i<=5;$i++)
@@ -539,7 +535,7 @@
                     <div class="product-bs-slider-2">
                         <div class="product-slider-3 swiper-container">
                             <div class="swiper-wrapper">
-                              @foreach($product->take(10) as $products)
+                              @foreach($product->where('quantity','>',0)->take(10) as $products)
                                 <div class="product__item mb-20 swiper-slide">
                                     <div class="product__thumb fix">
                                         <div class="product-image w-img">
@@ -555,11 +551,11 @@
                                         </div>
                                         @endif
                                         <div class="product-action">
-                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $loop->index }}">
+                                            <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{ $products->id }}">
                                                 <i class="fal fa-eye"></i>
                                                 <i class="fal fa-eye"></i>
                                             </a>
-                                            <a href="#" class="icon-box icon-box-1">
+                                            <a href="{{ route('add_wishlist',$products->id)}}" class="icon-box icon-box-1">
                                                 <i class="fal fa-heart"></i>
                                                 <i class="fal fa-heart"></i>
                                             </a>

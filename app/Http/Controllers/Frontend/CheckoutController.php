@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use DGvai\SSLCommerz\SSLCommerz;
 use App\Library\SslCommerz\SslCommerzNotification;
+use Cartalyst\Stripe\Laravel\Facades\Stripe;
+use Stripe\Error\Card;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -12,21 +14,45 @@ use App\Models\cart;
 use App\Models\order;
 use App\Models\orderitem;
 use App\Models\payment_type;
+use App\Models\product;
 
 class CheckoutController extends Controller
-{
+{   
+    
     public function index(){
+      $totals=totals(Auth::user()->id);
       if(!Auth::check()){
            return redirect()->route('login');
       }
+      if(!$totals > 0){
+        return redirect ('/');
+      }
+      //check cart value getterthen coupon value
+       if(session()->has('coupon')){
+           if($totals < session()->get('coupon')['cart_value']){
+             session ()->forget('coupon');
+           }
+        }
       $cart=checkout_cart(Auth::user()->id);
-      $totals=totals(Auth::user()->id);
+      
       return view('Frontend.checkout',compact('cart','totals'));
     }
     
-    
     public function store(Request $request){
-        
+   
+     
+        $request->validate([
+           'first_name'=>'required',
+           'last_name'=>'required',
+           'email'=>'required',
+           'phone'=>'required',
+           'city'=>'required',
+           'zipcode'=>'required',
+           'address'=>'required',
+           
+          ]);
+          
+        $totals=totals(Auth::user()->id);
         $order=new order();
         $order->user_id=Auth::user()->id;
         $order->tracking_code=rand(111111,9999999);
@@ -39,12 +65,23 @@ class CheckoutController extends Controller
         $order->zipcode=$request->post('zipcode');
         $order->address=$request->post('address');
         $order->order_note=$request->post('order_note');
-      
+        
+        if(session()->has('checkout')){
+          
+          $order->discount=session()->get('checkout')['discount'];
+          $order->subtotal=session ()->get('checkout')['subtotal'];
+          $order->total=session()->get('checkout')['total'];
+        }else{
+       
+          $order->subtotal=$totals;
+          $order->total=$totals;
+        }
+          
         $cart=checkout_cart(Auth::user()->id);
-        $totals=totals(Auth::user()->id);
-         DB::transaction(function() use ($request,$cart,$totals,$order){
+     
+       DB::transaction(function() use ($request,$cart,$totals,$order){
           if($order->save()){
-            session()->put('order_id',$order->id);
+            
             foreach($cart as $i){
             $orderItem=new orderitem();
             $orderItem->order_id=$order->id;
@@ -59,16 +96,31 @@ class CheckoutController extends Controller
             }else{
                $orderItem->price=$i->product->price; 
             }
-            $orderItem->quantity=$i->quantity;
-            $orderItem->total=$totals;
-           // $orderItem->save();
+              $orderItem->quantity=$i->quantity;
+            
+              $orderItem->save();
+             
+             $product=product::where('id',$orderItem->product_id)->first();
+             $product->quantity - $orderItem->quantity;
+             $product->save();
+             
             
             
          }
+         
+         cart::where('user_id',Auth::id())->delete();
          $payment=$request->post('payment');
          if($payment === "sslcommerz"){
+            cache()->put('orderid',$order->id);
+            cache()->put('userid',Auth::id());
+            
              $post_data = array();
-             $post_data['total_amount'] = $totals; # You cant not pay less than 10
+             if(session ()->has('checkout')){
+               $post_data['total_amount'] =session()->get('checkout')['total']; 
+             }else{
+               $post_data['total_amount'] = $totals; 
+             }
+             # You cant not pay less than 10
              $post_data['currency'] = "BDT";
              $post_data['tran_id'] = uniqid(); // tran_id must be unique
 
@@ -93,61 +145,12 @@ class CheckoutController extends Controller
              $sslc = new SslCommerzNotification();
             # initiate(Transaction Data , false: Redirect to SSLCOMMERZ gateway/ true: Show all the Payement gateway here )
              $payment_options = $sslc->makePayment($post_data, 'hosted');
+            
                  if (!is_array($payment_options)) {
                       print_r($payment_options);
                       $payment_options = array();
                 }
-             
-          
-         }elseif($payment === "aamrpay"){
-           $url = 'https://sandbox.aamarpay.com/request.php'; // live url https://secure.aamarpay.com/request.php
-            $fields = array(
-                'store_id' => 'aamrpay', //store id will be aamarpay,  contact integration@aamarpay.com for test/live id
-                 'amount' => '200', //transaction amount
-                'payment_type' => 'VISA', //no need to change
-                'currency' => 'BDT',  //currenct will be USD/BDT
-                'tran_id' => rand(1111111,9999999), //transaction id must be unique from your end
-                'cus_name' => 'customer name',  //customer name
-                'cus_email' => 'customeremail@mail.com', //customer email address
-                'cus_add1' => 'Dhaka',  //customer address
-                'cus_add2' => 'Mohakhali DOHS', //customer address
-                'cus_city' => 'Dhaka',  //customer city
-                'cus_state' => 'Dhaka',  //state
-                'cus_postcode' => '1206', //postcode or zipcode
-                'cus_country' => 'Bangladesh',  //country
-                'cus_phone' => '1231231231231', //customer phone number
-                'cus_fax' => 'Not¬Applicable',  //fax
-                'ship_name' => 'ship name', //ship name
-                'ship_add1' => 'House B-121, Road 21',  //ship address
-                'ship_add2' => 'Mohakhali',
-                'ship_city' => 'Dhaka', 
-                'ship_state' => 'Dhaka',
-                'ship_postcode' => '1212', 
-                'ship_country' => 'Bangladesh',
-                'desc' => 'payment description', 
-                'success_url' => route('aamrpay-success'), //your success route
-                'fail_url' => route('aamrpay-fail'), //your fail route
-                //'cancel_url' => 'http://localhost/foldername/cancel.php', //your cancel url
-                'opt_a' => 'Reshad',  //optional paramter
-                'opt_b' => 'Akil',
-                'opt_c' => 'Liza', 
-                'opt_d' => 'Sohel',
-                'signature_key' => '28c78bb1f45112f5d40b956fe104645a'); //signature key will provided aamarpay, contact integration@aamarpay.com for test/live signature key
-
-                $fields_string = http_build_query($fields);
-         
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_VERBOSE, true);
-            curl_setopt($ch, CURLOPT_URL, $url);  
-      
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            $url_forward = str_replace('"', '', stripslashes(curl_exec($ch)));	
-            curl_close($ch); 
-
-            $this->redirect_to_merchant($url_forward);
-           
+  
          }elseif($payment === "paypal"){
            $payment=new payment_type();
            $payment->user_id=Auth::user()->id;
@@ -159,27 +162,99 @@ class CheckoutController extends Controller
            return response()->json(['status'=>'Add Successful']);
         
              
-         }
+         }elseif($payment === "stripe"){
+          
+            $request->validate([
+              'card_number'=>'required',
+              'cvc'=>'required',
+              'exp_month'=>'required',
+              'exp_year'=>'required'
+              
+              ]);
+              $stripe=Stripe::make('sk_test_51KMQhFI3IGihHWoZRypJc0oz0Mtq9KCLPGC5ynpuPJDx6cHEL8vB1MCf5qIiCqHtP8jhIWiI3cpEs8KHQIL0ZiSz00WclAyzF5');
+             
+                $token=$stripe->tokens()->create([
+                  'card'=>[
+                    'number'=>$request->post('card_number'),
+                    'cvc'=>$request->post('cvc'),
+                    'exp_month'=>$request->post('exp_month'),
+                    'exp_year'=>$request->post('exp_year'),
+                    ],
+                  ]);
+                try{
+                  if(!isset($token['id'])){
+                    return back()->with('error','The Stripe Token was not generated correctly');
+                  }
+                  
+                  if(session()->has('checkout')){
+                    $charge=$stripe->charges()->create([
+                       'card'=> $token['id'],
+                       'currency'=>'USD',
+                       'amount'=>session()->get('checkout')['total'],
+                       'description'=>'Add in Wallet'
+                    ]);
+                    
+                    
+                  }else{
+                    $charge=$stripe->charges()->create([
+                       'card'=> $token['id'],
+                       'currency'=>'USD',
+                       'amount'=>$totals,
+                       'description'=>'Add in Wallet'
+                    ]);
+                    
+                    
+                  }
+                  
+                  if($charge['status'] == 'succeeded'){
+                   
+                    $payment=new payment_type();
+                    $payment->user_id=Auth::user()->id;
+                    $payment->order_id=$order->id;
+                    $payment->paymeny_id=$charge['id'];
+                    $payment->mode='stripe';
+                    $payment->status='approved';
+                    $payment->save();
+                    return redirect()->route('thank-you');
+                    dd('Add successfull');
+           
+                  }else{
+                    dd('money can not add in wallet');
+                  }
+                  
+                } catch (\Exception $e) {
+                  dd($e->getMessage());
+                } catch(\Cartalyst\Stripe\Exception\CardErrorException $e) {
+                  dd($e->getMessage());
+               } catch(\Cartalyst\Stripe\Exception\MissingParameterException $e) {
+                  dd($e->getMessage());
+               }
+                  
+              
+                
         
+         }elseif($payment === "cod"){
+           $payment=new payment_type();
+           $payment->user_id=Auth::user()->id;
+           $payment->order_id=$order->id;
+           $payment->mode='cod';
+           $payment->status='pending';
+           $payment->save();
+           dd('add success');
+           //return back()->with('success','Order Success');
+           
+         }
+         
         
        }
      });
+    
+    
+    
+         
         
     }
-    function redirect_to_merchant($url) {
 
-        ?>
-        <html xmlns="http://www.w3.org/1999/xhtml">
-          <head><script type="text/javascript">
-            function closethisasap() { document.forms["redirectpost"].submit(); } 
-          </script></head>
-          <body onLoad="closethisasap();">
-          
-            <form name="redirectpost" method="post" action="<?php echo 'https://sandbox.aamarpay.com/'.$url; ?>"></form>
-            <!-- for live url https://secure.aamarpay.com -->
-          </body>
-        </html>
-        <?php	
-        exit;
-    } 
+    
 }
+

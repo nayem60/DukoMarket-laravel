@@ -3,10 +3,12 @@
   $(function() {
     if ($("#order-chart").length) {
       var areaData = {
-        labels: ["10","","","20","","","30","","","40","","", "50","","", "60","","","70"],
+       // labels: ["Jun","","","20","","","30","","","40","","", "50","","", "60","","","70"],
+       labels:delivery_month,
         datasets: [
           {
-            data: [200, 480, 700, 600, 620, 350, 380, 350, 850, "600", "650", "350", "590", "350", "620", "500", "990", "780", "650"],
+           
+            data: total_delivery,
             borderColor: [
               '#4747A1'
             ],
@@ -15,7 +17,8 @@
             label: "Orders"
           },
           {
-            data: [400, 450, 410, 500, 480, 600, 450, 550, 460, "560", "450", "700", "450", "640", "550", "650", "400", "850", "800"],
+           
+            data:total_cancele,
             borderColor: [
               '#F09397'
             ],
@@ -54,9 +57,9 @@
               display: true,
               autoSkip: false,
               maxRotation: 0,
-              stepSize: 200,
-              min: 200,
-              max: 1200,
+              stepSize: 1,
+              min: 1,
+              max: 10,
               padding: 18,
               fontColor:"#6C7383"
             },
@@ -91,10 +94,12 @@
     }
     if ($("#order-chart-dark").length) {
       var areaData = {
-        labels: ["10","","","20","","","30","","","40","","", "50","","", "60","","","70"],
+        //labels: ["10","","","20","","","30","","","40","","", "50","","", "60","","","70"],
+        labels:delivery_month,
         datasets: [
           {
-            data: [200, 480, 700, 600, 620, 350, 380, 350, 850, "600", "650", "350", "590", "350", "620", "500", "990", "780", "650"],
+           // data: [200, 480, 700, 600, 620, 350, 380, 350, 850, "600", "650", "350", "590", "350", "620", "500", "990", "780", "650"],
+            data:total_delivery,
             borderColor: [
               '#4747A1'
             ],
@@ -103,7 +108,8 @@
             label: "Orders"
           },
           {
-            data: [400, 450, 410, 500, 480, 600, 450, 550, 460, "560", "450", "700", "450", "640", "550", "650", "400", "850", "800"],
+            //data: [400, 450, 410, 500, 480, 600, 450, 550, 460, "560", "450", "700", "450", "640", "550", "650", "400", "850", "800"],
+            data:total_cancele,
             borderColor: [
               '#F09397'
             ],
@@ -182,15 +188,11 @@
       var SalesChart = new Chart(SalesChartCanvas, {
         type: 'bar',
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-          datasets: [{
-              label: 'Offline Sales',
-              data: [480, 230, 470, 210, 330],
-              backgroundColor: '#98BDFF'
-            },
+          labels: sale_month,
+          datasets: [
             {
               label: 'Online Sales',
-              data: [400, 340, 550, 480, 170],
+              data: sale_amount,
               backgroundColor: '#4B49AC'
             }
           ]
@@ -218,7 +220,7 @@
               ticks: {
                 display: true,
                 min: 0,
-                max: 560,
+                max: max_sale,
                 callback: function(value, index, values) {
                   return  value + '$' ;
                 },

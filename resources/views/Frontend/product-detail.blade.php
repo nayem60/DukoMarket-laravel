@@ -130,7 +130,7 @@
                         @endif
                             
                             <div class="product-stock mb-20">
-                                <h5>Availability: <span> {{ $product->quantity}} in stock{{ $product->id }}</span></h5>
+                                <h5>Availability: <span> {{ $product->quantity}} in stock</span></h5>
                             </div>
                             <div class="cart-option mb-15">
                                 <div class="product-quantity mr-20">
@@ -146,15 +146,13 @@
                             <div class="details-meta">
                                 <div class="d-meta-left">
                                     <div class="dm-item mr-20">
-                                        <a href="#"><i class="fal fa-heart"></i>Add to wishlist</a>
+                                        <a href="{{ route('add_wishlist',$product->id)}}"><i class="fal fa-heart"></i>Add to wishlist</a>
                                     </div>
-                                    <div class="dm-item">
-                                        <a href="#"><i class="fal fa-layer-group"></i>Compare</a>
-                                    </div>
+                                   
                                 </div>
                                 <div class="d-meta-left">
                                     <div class="dm-item">
-                                        <a href="#"><i class="fal fa-share-alt"></i>Share</a>
+                                        <a href="javascript:void(0)"><i class="fal fa-share-alt"></i>Share</a>
                                     </div>
                                 </div>
                             </div>

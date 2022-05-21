@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\coupon;
 class CouponController extends Controller
 {
     /**
@@ -14,7 +14,8 @@ class CouponController extends Controller
      */
     public function index()
     {
-        return view('Backend.coupon');
+        $coupon=coupon::all();
+        return view('Backend.coupon',compact('coupon'));
     }
 
     /**

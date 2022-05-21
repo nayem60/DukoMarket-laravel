@@ -16,6 +16,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
+            $table->decimal('subtotal')->nullable();
+            $table->decimal('discount')->default(0);
+            $table->decimal('tax')->default(0);
+            $table->decimal('total');
             $table->string('tracking_code');
             $table->string('first_name');
             $table->string('last_name');

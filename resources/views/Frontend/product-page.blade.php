@@ -72,11 +72,11 @@
                                                         </a>
                                                     </div>
                                                     <div class="product-action">
-                                                        <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{$loop->index}}">
+                                                        <a href="#" class="icon-box icon-box-1" data-bs-toggle="modal" data-bs-target="#productModalId{{$products->id}}">
                                                             <i class="fal fa-eye"></i>
                                                             <i class="fal fa-eye"></i>
                                                         </a>
-                                                        <a href="#" class="icon-box icon-box-1">
+                                                        <a href="{{ route('add_wishlist',$products->id)}}" class="icon-box icon-box-1">
                                                             <i class="fal fa-heart"></i>
                                                             <i class="fal fa-heart"></i>
                                                         </a>
@@ -121,7 +121,7 @@
                                                     <a href="{{ route('add_cart',$products->id) }}" class="cart-btn d-flex mb-10 align-items-center justify-content-center w-100">
                                                     Add to Cart
                                                     </a>
-                                                    <button type="button" class="wc-checkout d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#productModalId{{$loop->index}}">
+                                                    <button type="button" class="wc-checkout d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#productModalId{{$products->id}}">
                                                         Quick View
                                                     </button>
                                                 </div>
@@ -176,7 +176,7 @@
                                                         @endforeach
                                                         <div class="col-md-8">
                                                             <div class="product__content product__content-d">
-                                                                <h6><a href="product-details.html">{{ $row->name }}</a></h6>
+                                                                <h6><a href="{{ route('product_detail',$row->slug) }}">{{ $row->name }}</a></h6>
                                                                 <div class="rating mb-5">
                                                                     <ul class="rating-d">
                                                                       @for($i=1;$i<=5;$i++)
@@ -193,10 +193,10 @@
                                                                 </div>
                                                                 <div class="features-des">
                                                                     <ul>
-                                                                        <li><a href="product-details.html"><i class="fas fa-circle"></i> Bass and Stereo Sound.</a></li>
-                                                                        <li><a href="product-details.html"><i class="fas fa-circle"></i> Display with 3088 x 1440 pixels resolution.</a></li>
-                                                                        <li><a href="product-details.html"><i class="fas fa-circle"></i> Memory, Storage &amp; SIM: 12GB RAM, 256GB.</a></li>
-                                                                        <li><a href="product-details.html"><i class="fas fa-circle"></i> Androi v10.0 Operating system.</a></li>
+                                                                        <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Bass and Stereo Sound.</a></li>
+                                                                        <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Display with 3088 x 1440 pixels resolution.</a></li>
+                                                                        <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Memory, Storage &amp; SIM: 12GB RAM, 256GB.</a></li>
+                                                                        <li><a href="{{ route('product_detail',$row->slug) }}"><i class="fas fa-circle"></i> Androi v10.0 Operating system.</a></li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -217,7 +217,7 @@
                                                     <a href="{{ route('add_cart',$row->id) }}" class="cart-btn d-flex mb-10 align-items-center justify-content-center w-100">
                                                     Add to Cart
                                                     </a>
-                                                    <button type="button" class="wc-checkout d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#productModalId">
+                                                    <button type="button" class="wc-checkout d-flex align-items-center justify-content-center w-100" data-bs-toggle="modal" data-bs-target="#productModalId{{ $row->id }}">
                                                         Quick View
                                                     </button>
                                                 </div>

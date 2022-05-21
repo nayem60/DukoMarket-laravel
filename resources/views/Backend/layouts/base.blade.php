@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="{{asset('frontend')}}/assets/css/font-awesome-pro.css">
   <!-- inject:css -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
   <link rel="stylesheet" href="{{asset('backend')}}/css/vertical-layout-light/style.css">
    <link rel="stylesheet" href="sweetalert2.min.css">
@@ -302,28 +303,28 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">
+          <li class="nav-item {{Request::is('admin/dashboard')?'active':''}}">
+            <a class="nav-link" href="dashboard">
               <i class="icon-grid menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          <li class="nav-item {{ Request::is('admin/category','admin/subcategory','admin/brand')?'active':'' }}">
+          <li class="nav-item {{ Request::is('admin/categorys','admin/subcategory','admin/brands')?'active':'' }}">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <i class="icon-layout menu-icon"></i>
-              <span class="menu-title">Category</span>
+              <span class="menu-title">Category Manage</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="ui-basic">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="{{ route('category') }}">Category</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{ route('subcategory') }}">Subcategory</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{ route('subcategorychild') }}">Subcategory Child</a></li>
-                <li class="nav-item"> <a class="nav-link" href="{{ route('brand') }}">Brand</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('categorys.index') }}">Category</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('subcategorys.index') }}">Subcategory</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('subcategory-childs.index') }}">Subcategory Child</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('brands.index') }}">Brand</a></li>
               </ul>
             </div>
           </li>
-          <li class="nav-item {{ Request::is('admin/coupon','admin/color','admin/size','admin/attribute_set')?'active':'' }}">
+          <li class="nav-item {{ Request::is('admin/coupon','admin/attribute_set')?'active':'' }}">
             <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
               <i class="icon-columns menu-icon"></i>
               <span class="menu-title">Product</span>
@@ -331,13 +332,23 @@
             </a>
             <div class="collapse" id="form-elements">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html">Product List</a></li>
-                <li class="nav-item"><a class="nav-link" href="pages/forms/basic_elements.html"> Add product</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product List</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{route('add-products.index')}}"> Add product</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('coupon') }}">Coupon</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('color') }}">Color</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('size')}}">Size</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('attribute_set') }}">Attribute Set</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('variants.index') }}">Attribute Set</a></li>
              
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item {{ Request::is('admin/flash-sales')?'active':''}}">
+            <a class="nav-link" data-toggle="collapse" href="#flash" aria-expanded="false" aria-controls="icons">
+              <i class="icon-contract menu-icon"></i>
+              <span class="menu-title">Flash Sale</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="flash">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('flash-sales.index') }}">Flash Sale</a></li>
               </ul>
             </div>
           </li>
@@ -358,24 +369,27 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
               <i class="icon-grid-2 menu-icon"></i>
-              <span class="menu-title">Tables</span>
+              <span class="menu-title">Option</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="tables">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('colors.index') }}">Color</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('sizes.index')}}">Size</a></li>
+              
               </ul>
             </div>
           </li>
-          <li class="nav-item">
+          <li class="nav-item {{ Request::is('admin/order')?'active':''}}">
             <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="icon-contract menu-icon"></i>
-              <span class="menu-title">Icons</span>
+              <span class="menu-title">Order</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="icons">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="pages/icons/mdi.html">Mdi icons</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('order.index') }}">Order</a></li>
               </ul>
             </div>
           </li>
@@ -406,9 +420,9 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="pages/documentation/documentation.html">
+            <a class="nav-link" href="{{ route('admin.logout')}}">
               <i class="icon-paper menu-icon"></i>
-              <span class="menu-title">Documentation</span>
+              <span class="menu-title">Logout</span>
             </a>
           </li>
         </ul>
@@ -440,7 +454,7 @@
   <script src="{{asset('backend')}}/js/hoverable-collapse.js"></script>
   <script src="{{asset('backend')}}/js/template.js"></script>
   <script src="{{asset('backend')}}/js/settings.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <!-- endinject -->
   <!-- Custom js for this page-->
   <script src="{{asset('backend')}}/js/dashboard.js"></script>
@@ -465,7 +479,7 @@
     icon: 'success',
     title: '{{Session("success")}}'
   })
-    @else if(Session::has('error'))
+    @elseif(Session::has('error'))
     
     const Toast = Swal.mixin({
     toast: true,

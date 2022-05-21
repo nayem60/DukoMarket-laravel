@@ -18,6 +18,9 @@ class variant extends Model
     
     ];
     
+    public function product(){
+      return $this->belongsTo(product::class,'product_id');
+    }
     public function size(){
       return $this->belongsTo(size::class,'size_id');
     }

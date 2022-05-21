@@ -15,6 +15,10 @@ class RazorpayController extends Controller
     public function razorpay(Request $request){
       $cart=cart::where('user_id',Auth::user()->id)->get();
       $totals=0;
+      
+    if(session()->has('checkout')){
+       $totals=session()->get('checkout')['total'];
+     }else{
       foreach($cart as $carts){
             if($carts->variant){
                 $totals+=$carts->variant->price*$carts->quantity;
@@ -24,6 +28,7 @@ class RazorpayController extends Controller
                $totals+=$carts->product->price*$carts->quantity;
             }
        }
+     }
       $first_name=$request->input('first_name');
       $last_name=$request->input('last_name');
       $country=$request->input('country');
@@ -33,7 +38,7 @@ class RazorpayController extends Controller
       $email=$request->input('email');
       $mobile=$request->input('mobile');
       $order_note=$request->input('order_note');
-      
+
       return response()->json([
      'first_name'=>$first_name,
      'last_name'=>$last_name,
@@ -45,7 +50,7 @@ class RazorpayController extends Controller
      'mobile'=>$mobile,
      'order_note'=>$order_note,
      'totals'=>$totals
-     
+       
         
         ]);
       
@@ -65,30 +70,41 @@ class RazorpayController extends Controller
         $order->address=$request->input('address');
         $order->order_note=$request->input('order_note');
   
-        $cart=checkout_cart(Auth::user()->id);
+        $cart=cart::where('user_id',Auth::user()->id)->get();
         $totals=totals(Auth::user()->id);
+        if(session()->has('checkout')){
+          
+          $order->discount=session()->get('checkout')['discount'];
+          $order->subtotal=session ()->get('checkout')['subtotal'];
+          $order->total=session()->get('checkout')['total'];
+        }else{
+       
+          $order->subtotal=$totals;
+          $order->total=$totals;
+        }
         DB::transaction(function() use ($request,$cart,$totals,$order){
           if($order->save()){
-            foreach($cart as $i){
-            $orderItem=new orderitem();
-            $orderItem->order_id=$order->id;
-            $orderItem->product_id=$i->product_id;
-            if($i->variant_id){
-            $orderItem->variant_id=$i->variant_id;
-            }
-            if($i->variant_id){
+           foreach($cart as $i){
+              $orderItem=new orderitem();
+              $orderItem->order_id=$order->id;
+              $orderItem->product_id=$i->product_id;
+              if($i->variant_id){
+                $orderItem->variant_id=$i->variant_id;
+              }
+              if($i->variant_id){
                $orderItem->price=$i->variant->price;
-            }elseif($i->product->discount_price){
+              }elseif($i->product->discount_price){
                $orderItem->price=$i->product->discount_price; 
-            }else{
+              }else{
                $orderItem->price=$i->product->price; 
-            }
-            $orderItem->quantity=$i->quantity;
-            $orderItem->total=$totals;
-            $orderItem->save();
+              }
+              $orderItem->quantity=$i->quantity;
+              $orderItem->save();
             
             
          }
+         cart::where('user_id',Auth::id())->delete();
+         
          $payment=new payment_type();
          $payment->user_id=Auth::user()->id;
          $payment->order_id=$order->id;

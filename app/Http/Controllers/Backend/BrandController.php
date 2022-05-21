@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\category;
 use App\Models\subcategory;
 use App\Models\brand;
+use Illuminate\Support\Str;
 class BrandController extends Controller
 {
     /**
@@ -14,11 +15,18 @@ class BrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search=$request->search;
+        if($search){
+          $brand=brand::where('title',$search)->get();
+        }else{
+          $brand=brand::all();
+        }
+          
         $category=category::all();
         $subcategory=subcategory::all();
-        return view('Backend.brand',compact('category','subcategory'));
+        return view('Backend.brand',compact('search','category','subcategory','brand'));
     }
 
     /**
@@ -44,14 +52,18 @@ class BrandController extends Controller
         $title=$request->post('title');
         $slug=$request->post('slug');
         $status=$request->post('status');
+        if($category_id == "0" &&  $subcategory_id == "0" && $title){
+          return back()->with('error','Field Is Required');
         
+        }
         $brand=new brand();
         $brand->category_id=$category_id;
         $brand->subcategory_id=$subcategory_id;
         $brand->title=$title;
-        $brand->status=$status;
+        $brand->slug=Str::slug($slug ?? $title,'-');
+        $brand->status=$status ?? 0;
         $brand->save();
-        return back();
+        return back()->with('success','Add Brand Success!');
         
         
     }
@@ -87,7 +99,24 @@ class BrandController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $category_id=$request->post('category_id');
+        $subcategory_id=$request->post('subcategory_id');
+        $title=$request->post('title');
+        $slug=$request->post('slug');
+        $status=$request->post('status');
+        if($category_id == "0" &&  $subcategory_id == "0" && $title){
+          return back()->with('error','Field Is Required');
+        
+        }
+        $brand=brand::find($id);
+        $brand->category_id=$category_id;
+        $brand->subcategory_id=$subcategory_id;
+        $brand->title=$title;
+        $brand->slug=Str::slug($slug ?? $title,'-');
+        $brand->status=$status ?? 0;
+        $brand->save();
+        return back()->with('success','Update Brand Success!');
+      
     }
 
     /**
@@ -98,6 +127,7 @@ class BrandController extends Controller
      */
     public function destroy($id)
     {
-        //
+        brand::find($id)->delete ();
+        return back()->with('success','Brand Delete Success');
     }
 }

@@ -31,13 +31,15 @@ class CategoryController extends Controller
         $title=$request->post('title');
         $slug=$request->post('slug');
         $active=$request->post('status');
-      
+        if($title==""){
+          return back()->with('error','Field Require');
+        }
         $category=new category();
         $category->title=$title;
-        $category->slug=Str::slug($slug,'-');
-        $category->status=$active;
+        $category->slug=Str::slug($slug,'-') ?? Str::slug($title,'-');
+        $category->status=$active ?? 0;
         $category->save();
-        return back();
+        return back()->with('success','Category Add Successful!');
         
         
     }
@@ -57,12 +59,26 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $title=$request->post('title');
+        $slug=$request->post('slug');
+        $active=$request->post('status');
+        if($title==""){
+          return back()->with('error','Field is Required');
+        }
+        $category=category::findOrFail($id);
+        $category->title=$title;
+        $category->slug=Str::slug($slug,'-') ?? Str::slug($title,'-');
+        $category->status=$active ?? 0;
+        $category->save();
+        return back()->with('success','Category Update Successful!');
+        
     }
 
 
     public function destroy($id)
     {
-        //
+        category::find($id)->delete();
+        return back()->with('success','Category Delete Successful!');
+        
     }
 }

@@ -17,7 +17,8 @@ class SubcategoryController extends Controller
     public function index()
     {
         $category=category::all();
-        return view('Backend.subcategory',compact('category'));
+        $subcategory=subcategory::all();
+        return view('Backend.subcategory',compact('category','subcategory'));
     }
 
     /**
@@ -42,14 +43,16 @@ class SubcategoryController extends Controller
         $title=$request->post('title');
         $slug=$request->post('slug');
         $status=$request->post('status');
-        
+        if($category_id=="" && $title== "" && $slug == ""){
+          return back()->with('error','Field is Required');
+        }
         $subcategory=new subcategory();
         $subcategory->category_id=$category_id;
         $subcategory->title=$title;
-        $subcategory->slug=Str::slug($slug,'-');
-        $subcategory->status=$status;
+        $subcategory->slug=Str::slug($slug,'-') ?? Str::slug($title,'-');
+        $subcategory->status=$status ?? 0;
         $subcategory->save();
-        return back();
+        return back()->with('success','Subcategory Create Successful!');
     }
 
     /**
@@ -83,7 +86,20 @@ class SubcategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $category_id=$request->post('category_id');
+        $title=$request->post('title');
+        $slug=$request->post('slug');
+        $status=$request->post('status');
+        if($category_id=="" && $title== "" && $slug==""){
+          return back()->with('error','Field is Required');
+        }
+        $subcategory=subcategory::find($id);
+        $subcategory->category_id=$category_id;
+        $subcategory->title=$title;
+        $subcategory->slug=Str::slug($slug,'-') ?? Str::slug($title,'-');
+        $subcategory->status=$status ?? 0;
+        $subcategory->save();
+        return back()->with('success','Subcategory Update Successful!');
     }
 
     /**
@@ -94,6 +110,7 @@ class SubcategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        subcategory::find($id)->delete ();
+        return back()->with('success','Subcategory Delete Successful!');
     }
 }

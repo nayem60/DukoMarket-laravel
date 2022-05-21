@@ -37,3 +37,30 @@ function rating(number,type){
   
   $('#rating_form').submit();
 }
+
+function brandFilter(id,type){
+  var brand=$("#brandId").val()
+  if(type==1){
+    var new_id=brand.replace(id+':','')
+    $("#brandId").val(new_id)
+  }else{
+    $("#brandId").val(id+':'+brand)
+    $("#brand_form").submit ()
+  }
+  $("#brand_form").submit ()
+  
+  
+}
+
+function colorFilter(id,type){
+  var color=$("#colorId").val()
+  if(type==1){
+    var new_id=color.replace(id+':','')
+    $("#colorId").val(new_id)
+  }else{
+    $("#colorId").val(id+':'+color)
+    $("#color_form").submit()
+  }
+    
+  $("#color_form").submit()
+}

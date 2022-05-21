@@ -11,12 +11,14 @@ class product extends Model
     protected $table="products";
     
     public function variant(){
-      return $this->hasMany(variant::class,'product_id');
+      return $this->hasOne(variant::class,'product_id');
+    }
+    
+    public function category(){
+      return $this->belongsTo(category::class,'category_id');
     }
     public function subcategory(){
       return $this->belongsTo(subcategory::class,'subcategory_id');
-    
-      
     }
     
     public function orderitem(){

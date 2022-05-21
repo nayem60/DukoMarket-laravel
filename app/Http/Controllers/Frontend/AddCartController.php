@@ -28,6 +28,7 @@ class AddCartController extends Controller
               $totals+=$carts->product->price*$carts->quantity;
             }
         }
+        
         //======= check Coupon
         $check_coupon=coupon::where('code',$coupon_code)->where('cart_value','<=',$totals)->where('exfail_date','>=',Carbon::now())->first();
         if($check_coupon){
@@ -51,16 +52,37 @@ class AddCartController extends Controller
               $discount=($totals*session()->get('coupon')['value'])/100;
             }
              $subtotal=$totals-$discount;
-             
-            
         }
+        if(session()->has('coupon')){
+            session()->put('checkout',[
+                 'discount'=>$discount,
+                 'subtotal'=>$totals,
+                 'total'=>$subtotal,
+                  
+              ]);
+        }else{
+          session()->put('checkout',[
+                 'discount'=>null,
+                 'subtotal'=>$totals,
+                 'total'=>$totals,
+              ]);
+          
+        }
+        
+        //check cart value getterthen coupon value
+         if(session()->has('coupon')){
+           if($totals < session()->get('coupon')['cart_value']){
+             session()->forget('coupon');
+           }
+         }
+        
         return view('Frontend.cart',compact('cart','totals','discount','subtotal'));
     }
 
 
     public function create()
     {
-        //
+        
     }
 
 
@@ -72,14 +94,14 @@ class AddCartController extends Controller
         $check_variant=variant::where("product_id",$id)->first();
       
        if($check_variant){
-          $cart_variant=cart::where('user_id',$user)->where('variant_id',$variantId)->first();
+          $cart_variant=cart::where('user_id',$user)->where('product_id',$id)->where('variant_id',$variantId)->first();
           if($cart_variant){
             $control=1;
           }else{
             $control=0;
           }
        }else{
-         $cart_product=cart::where('user_id',$user)->where('product_id',$id)->first();
+         $cart_product=cart::where('user_id',$user)->where('product_id',$id)->where('variant_id',null)->first();
           if($cart_product){
             $control=1;
           }else{
@@ -113,7 +135,7 @@ class AddCartController extends Controller
          
        }else{
            if($control==1){
-             $carts=cart::where('user_id',$user)->where('product_id',$id,)->where('variant_id',null)->first();
+             $carts=cart::where('user_id',$user)->where('product_id',$id)->where('variant_id',null)->first();
              $carts->quantity+=1;
              $carts->save();
              return back()->with('success','Quantity Update');
@@ -138,6 +160,7 @@ class AddCartController extends Controller
           $cart->save();
         }else{
           $cart->delete();
+          
         }
     }
 
@@ -159,6 +182,12 @@ class AddCartController extends Controller
     public function remove($id)
     {
         $cart=cart::where('user_id',Auth::user()->id)->where('id',$id)->delete();
-        return "deleted";
+        return back();
+    }
+    
+    
+    public function forget_session(){
+      session()->forget('coupon');
+      return back();
     }
 }

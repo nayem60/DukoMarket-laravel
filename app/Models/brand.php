@@ -9,4 +9,10 @@ class brand extends Model
 {
     use HasFactory;
     protected $table="brands";
+    public function category(){
+      return $this->belongsTo(category::class,'category_id');
+    }
+    public function subcategory(){
+      return $this->belongsTo(subcategory::class,'subcategory_id');
+    }
 }
